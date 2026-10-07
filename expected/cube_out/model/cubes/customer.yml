@@ -1,0 +1,26 @@
+cubes:
+- name: customer
+  sql_table: samples.tpch.customer
+  meta:
+    ossie:
+      unique_keys:
+      - - c_custkey
+      key_from_unique_keys: true
+  dimensions:
+  - name: customer_name
+    sql: c_name
+    type: string
+    description: Customer name
+    meta:
+      ossie:
+        no_role: true
+        dialect: DATABRICKS
+        untyped: true
+  - name: c_custkey
+    sql: c_custkey
+    type: string
+    primary_key: true
+    meta:
+      ossie:
+        synthetic_key: true
+    public: false

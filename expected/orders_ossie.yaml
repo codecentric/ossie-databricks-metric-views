@@ -1,0 +1,79 @@
+version: "0.2.0.dev0"
+name: "sales"
+description: "Sales orders with customer attributes"
+datasets:
+- name: "sales"
+  source: "samples.tpch.orders"
+  fields:
+  - name: "order_date"
+    expression:
+      dialects:
+      - dialect: "DATABRICKS"
+        expression: "o_orderdate"
+    label: "Order Date"
+    ai_context:
+      synonyms:
+      - "order date"
+      - "date"
+  - name: "order_month"
+    expression:
+      dialects:
+      - dialect: "DATABRICKS"
+        expression: "DATE_TRUNC('MONTH', o_orderdate)"
+    description: "Month of order"
+- name: "customer"
+  source: "samples.tpch.customer"
+  unique_keys:
+  - - "c_custkey"
+  fields:
+  - name: "customer_name"
+    expression:
+      dialects:
+      - dialect: "DATABRICKS"
+        expression: "c_name"
+    description: "Customer name"
+relationships:
+- name: "sales_to_customer"
+  from: "sales"
+  to: "customer"
+  from_columns:
+  - "o_custkey"
+  to_columns:
+  - "c_custkey"
+  custom_extensions:
+  - vendor_name: "DATABRICKS"
+    data: "{\"_v\": 1, \"rely\": {\"at_most_one_match\": true}}"
+metrics:
+- name: "total_revenue"
+  expression:
+    dialects:
+    - dialect: "DATABRICKS"
+      expression: "SUM(o_totalprice)"
+  description: "Total order revenue"
+  ai_context:
+    synonyms:
+    - "revenue"
+    - "sales"
+  custom_extensions:
+  - vendor_name: "DATABRICKS"
+    data: "{\"_v\": 1, \"format\": {\"type\": \"currency\", \"currency_code\": \"\
+      USD\"}, \"display_name\": \"Total Revenue\"}"
+- name: "order_count"
+  expression:
+    dialects:
+    - dialect: "DATABRICKS"
+      expression: "COUNT(*)"
+  description: "Number of orders"
+- name: "revenue_trailing_7d"
+  expression:
+    dialects:
+    - dialect: "DATABRICKS"
+      expression: "SUM(o_totalprice)"
+  description: "Trailing 7 day revenue"
+  custom_extensions:
+  - vendor_name: "DATABRICKS"
+    data: "{\"_v\": 1, \"window\": [{\"order\": \"order_date\", \"range\": \"trailing\
+      \ 7 day\", \"semiadditive\": \"last\"}]}"
+custom_extensions:
+- vendor_name: "DATABRICKS"
+  data: "{\"_v\": 1, \"filter\": \"o_orderstatus <> 'X'\"}"

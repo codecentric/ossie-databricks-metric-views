@@ -1,0 +1,44 @@
+version: "1.1"
+source: "samples.tpch.orders"
+comment: "Sales orders with customer attributes"
+filter: "o_orderstatus <> 'X'"
+joins:
+- name: "customer"
+  source: "samples.tpch.customer"
+  "on": "source.o_custkey = customer.c_custkey"
+  rely:
+    at_most_one_match: true
+dimensions:
+- name: "order_date"
+  expr: "o_orderdate"
+  display_name: "Order Date"
+  synonyms:
+  - "order date"
+  - "date"
+- name: "order_month"
+  expr: "DATE_TRUNC('MONTH', o_orderdate)"
+  comment: "Month of order"
+- name: "customer_name"
+  expr: "customer.c_name"
+  comment: "Customer name"
+measures:
+- name: "total_revenue"
+  expr: "SUM(o_totalprice)"
+  comment: "Total order revenue"
+  synonyms:
+  - "revenue"
+  - "sales"
+  format:
+    type: "currency"
+    currency_code: "USD"
+  display_name: "Total Revenue"
+- name: "order_count"
+  expr: "COUNT(*)"
+  comment: "Number of orders"
+- name: "revenue_trailing_7d"
+  expr: "SUM(o_totalprice)"
+  comment: "Trailing 7 day revenue"
+  window:
+  - order: "order_date"
+    range: "trailing 7 day"
+    semiadditive: "last"

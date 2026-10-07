@@ -1,0 +1,46 @@
+name: sales
+description: Sales orders with customer attributes
+tables:
+- name: sales
+  base_table:
+    database: SAMPLES
+    schema: TPCH
+    table: ORDERS
+  facts:
+  - name: order_date
+    expr: o_orderdate
+    synonyms:
+    - order date
+    - date
+- name: customer
+  base_table:
+    database: SAMPLES
+    schema: TPCH
+    table: CUSTOMER
+  unique_keys:
+  - columns:
+    - c_custkey
+  facts:
+  - name: customer_name
+    expr: c_name
+    description: Customer name
+relationships:
+- name: sales_to_customer
+  left_table: sales
+  right_table: customer
+  relationship_columns:
+  - left_column: o_custkey
+    right_column: c_custkey
+metrics:
+- name: total_revenue
+  expr: SUM(o_totalprice)
+  description: Total order revenue
+  synonyms:
+  - revenue
+  - sales
+- name: order_count
+  expr: COUNT(*)
+  description: Number of orders
+- name: revenue_trailing_7d
+  expr: SUM(o_totalprice)
+  description: Trailing 7 day revenue

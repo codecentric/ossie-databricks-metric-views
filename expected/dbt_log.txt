@@ -1,0 +1,2 @@
+[WARNING] ROW_COUNT_METRIC_DROPPED: order_count was dropped during conversion because a row count or constant aggregate (COUNT(*), SUM(1), ...) did not identify exactly one dataset (qualify a COUNT(*) as COUNT(<dataset>.*)), or has no sensible translation at all, such as COUNT(DISTINCT *)
+Written to dbt_manifest.json

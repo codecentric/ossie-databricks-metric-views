@@ -1,0 +1,17 @@
+Wrote 3 file(s) to cube_out
+15 conversion issue(s):
+  [APPROXIMATED] metric 'total_revenue': no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [APPROXIMATED] metric 'order_count': no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [APPROXIMATED] metric 'revenue_trailing_7d': no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [PARKED_IN_META] dataset 'sales': a Cube join carries no metadata field, so relationship custom_extensions for customer are parked under meta.ossie.join_extensions
+  [APPROXIMATED] sales.order_date: no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [APPROXIMATED] sales.order_date: no datatype; emitted as Cube type 'string', which Cube requires
+  [APPROXIMATED] sales.order_month: no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [APPROXIMATED] sales.order_month: no datatype; emitted as Cube type 'string', which Cube requires
+  [DROPPED_NO_CUBE_EQUIVALENT] dataset 'sales': declares a relationship but no primary_key or unique_keys, and Cube requires a primary key on any cube with a join ('primary key for <cube> is required when join is defined') -- the model will not compile until the dataset declares one
+  [PARKED_IN_META] dataset 'customer': unique_keys have no Cube field; parked under meta.ossie
+  [APPROXIMATED] customer.customer_name: no ANSI_SQL expression; used the first warehouse dialect on offer ('DATABRICKS'). Cube passes SQL to the data source, so this is correct where the model reads that warehouse -- pass --dialect DATABRICKS to say so.
+  [APPROXIMATED] customer.customer_name: no datatype; emitted as Cube type 'string', which Cube requires
+  [APPROXIMATED] dataset 'customer': primary key 'c_custkey' is not backed by a scalar dimension; emitted as a non-public dimension with type 'string' (Cube requires a type and Ossie carries none here)
+  [APPROXIMATED] dataset 'customer': no primary_key, so the first unique_keys entry (c_custkey) is marked as the Cube primary key; Cube requires one on any cube that declares a join
+  [PARKED_IN_META] view 'sales_view': the model name 'sales' is also a cube name, and Cube keeps cubes and views in one namespace, so the view is emitted as 'sales_view' rather than 'sales'; the model's name is preserved under meta.ossie.model_name

@@ -1,0 +1,1 @@
+Validation PASSED: orders_ossie.yaml

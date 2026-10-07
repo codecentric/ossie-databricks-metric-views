@@ -57,18 +57,18 @@ ossie_db export orders_ossie.yaml -o orders_rt.yaml 2> export_notices.txt
 
 # The converters below report their findings as warnings and may exit non-zero; the logs are the result.
 echo "== 5. Ossie -> Snowflake"
-ossie-snowflake -i orders_ossie.yaml -o snowflake.yaml 2>&1 \
+ossie-snowflake -i orders_ossie.yaml -o sf.yaml 2>&1 \
   | sed 's#.*UserWarning: ##' | grep -v 'warnings.warn' > snowflake_log.txt || true
 
 echo "== 6. Ossie -> Cube"
-ossie-cube export -i orders_ossie.yaml -o cube > cube_log.txt 2>&1 || true
+ossie-cube export -i orders_ossie.yaml -o cube_out > cube_log.txt 2>&1 || true
 
 echo "== 7. Ossie -> dbt (MetricFlow)"
 ossie-dbt ossie-to-msi -i orders_ossie.yaml -o dbt_manifest.json > dbt_log.txt 2>&1 || true
 
 echo "== 8. Hypothesis: add an ANSI_SQL variant, convert to Snowflake again"
 "$PYTHON" "$ROOT/scripts/add_ansi_dialect.py" orders_ossie.yaml orders_ossie_ansi.yaml
-ossie-snowflake -i orders_ossie_ansi.yaml -o snowflake_ansi.yaml 2>&1 \
+ossie-snowflake -i orders_ossie_ansi.yaml -o sf_ansi.yaml 2>&1 \
   | sed 's#.*UserWarning: ##' | grep -v 'warnings.warn' > snowflake_ansi_log.txt || true
 
 echo "== Done. Results are in: $OUT"

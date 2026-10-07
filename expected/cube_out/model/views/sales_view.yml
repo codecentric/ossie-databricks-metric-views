@@ -1,0 +1,14 @@
+views:
+- name: sales_view
+  description: Sales orders with customer attributes
+  meta:
+    ossie:
+      custom_extensions:
+      - vendor_name: DATABRICKS
+        data: '\{"_v": 1, "filter": "o_orderstatus <> ''X''"\}'
+      model_name: sales
+  cubes:
+  - join_path: sales
+    includes: '*'
+  - join_path: sales.customer
+    includes: '*'

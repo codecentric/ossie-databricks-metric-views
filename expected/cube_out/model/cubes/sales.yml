@@ -1,0 +1,72 @@
+cubes:
+- name: sales
+  sql_table: samples.tpch.orders
+  meta:
+    ossie:
+      join_extensions:
+        customer:
+        - vendor_name: DATABRICKS
+          data: '\{"_v": 1, "rely": \{"at_most_one_match": true\}\}'
+  joins:
+  - name: customer
+    sql: '{CUBE}.o_custkey = {customer}.c_custkey'
+    relationship: many_to_one
+  dimensions:
+  - name: order_date
+    sql: o_orderdate
+    type: string
+    title: Order Date
+    meta:
+      ai_context: 'Also known as: order date, date.'
+      ossie:
+        no_role: true
+        dialect: DATABRICKS
+        untyped: true
+        ai_context:
+          synonyms:
+          - order date
+          - date
+  - name: order_month
+    sql: DATE_TRUNC('MONTH', {CUBE}.o_orderdate)
+    type: string
+    description: Month of order
+    meta:
+      ossie:
+        no_role: true
+        dialect: DATABRICKS
+        untyped: true
+  measures:
+  - name: total_revenue
+    sql: '{CUBE}.o_totalprice'
+    type: sum
+    description: Total order revenue
+    meta:
+      ai_context: 'Also known as: revenue, sales.'
+      ossie:
+        custom_extensions:
+        - vendor_name: DATABRICKS
+          data: '\{"_v": 1, "format": \{"type": "currency", "currency_code": "USD"\},
+            "display_name": "Total Revenue"\}'
+        dialect: DATABRICKS
+        ai_context:
+          synonyms:
+          - revenue
+          - sales
+  - name: order_count
+    sql: COUNT(*)
+    type: number
+    description: Number of orders
+    meta:
+      ossie:
+        dialect: DATABRICKS
+  - name: revenue_trailing_7d
+    sql: '{CUBE}.o_totalprice'
+    type: sum
+    description: Trailing 7 day revenue
+    meta:
+      ossie:
+        custom_extensions:
+        - vendor_name: DATABRICKS
+          data: '\{"_v": 1, "window": [\{"order": "order_date", "range": "trailing
+            7 day", "semiadditive": "last"\}]\}'
+        dialect: DATABRICKS

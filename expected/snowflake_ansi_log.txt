@@ -1,0 +1,7 @@
+Dropped from field 'order_date' (no Snowflake counterpart): label
+Skipping field/metric 'order_month': no Snowflake-compatible expression (has dialects: DATABRICKS; requires SNOWFLAKE, ANSI_SQL, or OSSIE_SQL_2026)
+Dropped from relationship 'sales_to_customer' (no Snowflake counterpart): custom_extensions
+Dropped from metric 'total_revenue' (no Snowflake counterpart): custom_extensions
+Dropped from metric 'revenue_trailing_7d' (no Snowflake counterpart): custom_extensions
+Dropped from model (no Snowflake counterpart): custom_extensions
+Converted orders_ossie_ansi.yaml -> sf_ansi.yaml
