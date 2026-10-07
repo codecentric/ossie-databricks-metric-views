@@ -7,9 +7,10 @@
 # Example:
 #   ./scripts/databricks_test.sh my-profile main.scratch
 #
-# Requires: Databricks CLI >= 0.292 with a valid profile, a SQL warehouse, SELECT on
+# Requires: Databricks CLI (tested with v1.10.0) with a valid profile, a SQL warehouse, SELECT on
 # samples.tpch.orders / samples.tpch.customer, and CREATE TABLE + USE SCHEMA on <catalog.schema>.
-# Metric views need Databricks Runtime 17.2+ (YAML 1.1) and 17.3+ for synonyms/display_name/format.
+# Agent metadata (synonyms, display_name, format) needs Databricks Runtime 17.3+; a SQL warehouse is updated
+# automatically. See https://docs.databricks.com/aws/en/uc-semantics/metric-views/feature-availability
 #
 # The view is named ossie_orders_mv_test and is dropped on exit, also if a step fails.
 # Statements are sent through the REST Statement Execution API (scripts/dbx_sql.py) because

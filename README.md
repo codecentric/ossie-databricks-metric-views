@@ -64,7 +64,7 @@ What the run showed:
 
 ## Limits
 
-- The deployment test ran once, on one serverless SQL warehouse. Databricks documents window measures as an experimental feature (with examples under YAML version 0.1); the version 1.1 definition with a window deployed and returned correct results there, but this may change.
+- The deployment test ran once, on one serverless SQL warehouse. The Databricks documentation shows window measures with version 1.1 examples, and the exported definition deployed and returned correct results there. The current documentation lists `fields` as the keyword for dimensions and accepts `dimensions` as a backward-compatible synonym, which is what the converter writes.
 - The converters are development-stage software (Ossie model version `0.2.0.dev0`). Later versions may behave differently. A difference against `expected/` is therefore an informative result and not necessarily an error.
 - One small model, one converter version. The findings are illustrative, not a benchmark.
 
