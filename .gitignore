@@ -2,3 +2,4 @@ work/
 out/
 .DS_Store
 __pycache__/
+databricks_out/
