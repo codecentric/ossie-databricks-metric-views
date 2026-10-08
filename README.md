@@ -1,6 +1,6 @@
 # Apache Ossie and Databricks Metric Views: reproducing the experiment
 
-This repository accompanies the codecentric blog article *Apache Ossie and Databricks Metric Views: What Survives the Round Trip* (link to follow once published).
+This repository accompanies the codecentric blog article *Testing Apache Ossie With Databricks Metric Views: What Survives the Conversion* (link to follow once published).
 
 It converts a small Databricks Unity Catalog Metric View into an [Apache Ossie](https://github.com/apache/ossie) (incubating) semantic model and back, and then hands the Ossie model to the Snowflake, Cube and dbt (MetricFlow) converters to see what is lost on the way.
 
