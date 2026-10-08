@@ -7,7 +7,8 @@
 set -euo pipefail
 
 OSSIE_REPO="https://github.com/apache/ossie.git"
-OSSIE_COMMIT="891f007945b5666464a45e2c75c1a0a8be9cd7f7"
+# Pinned commit (override with OSSIE_COMMIT=<sha or branch> to test another version of Apache Ossie).
+OSSIE_COMMIT="${OSSIE_COMMIT:-698272a1973fac137f66a21f8899014ea3208d10}"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK="$ROOT/work"
@@ -39,6 +40,8 @@ JAR="$(ls "$WORK"/ossie/converters/databricks/java/target/ossie-databricks-conve
 ossie_db() { "$JAVA_BIN" -jar "$JAR" "$@"; }
 
 echo "== 3. Python environment for the validator and the dbt/Cube/Snowflake converters"
+# Rebuild the environment on every run so that it always matches the pinned Apache Ossie commit.
+rm -rf "$WORK/venv"
 "$PYTHON" -m venv "$WORK/venv"
 # shellcheck disable=SC1091
 source "$WORK/venv/bin/activate"

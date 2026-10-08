@@ -22,7 +22,7 @@ export JAVA_HOME=/path/to/jdk-21-or-newer   # if your default java is older
 
 The script:
 
-1. fetches `apache/ossie` at the pinned commit `891f007945b5666464a45e2c75c1a0a8be9cd7f7` into `work/`;
+1. fetches `apache/ossie` at the pinned commit `698272a1973fac137f66a21f8899014ea3208d10` into `work/`;
 2. builds the Java Databricks converter with Maven;
 3. creates a Python virtual environment with the Ossie validator and the dbt, Cube and Snowflake converters;
 4. converts `input/orders_metric_view.yaml` to Ossie and back, validates the Ossie model, and compares the original with the re-export;
