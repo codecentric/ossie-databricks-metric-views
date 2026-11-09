@@ -9,7 +9,7 @@ It converts a small Metric View into an Ossie semantic model and back, deploys t
 - **Round trip:** Metric View to Ossie and back to a Metric View yields an equal document. Features without a native Ossie field (view filter, currency format, window measure, join `rely` hint) are carried as `custom_extensions` payloads.
 - **Other targets:** the converters differ in how much they keep and how openly they report loss. In the reference run, the Cube output turns the trailing-window measure `revenue_trailing_7d` into a plain sum without mentioning it, and the Snowflake converter skips all expressions until an `ANSI_SQL` variant is added.
 
-The scripts here only produce the evidence; the reference outputs are in `expected/`.
+The scripts here only produce the evidence; the reference outputs are in `expected/`. [RESULTS.md](RESULTS.md) lists every test with its result, evidence file and how sure we are.
 
 ## Run it
 
@@ -73,6 +73,7 @@ Limits: this was run on DuckDB only. Nothing was run on MotherDuck itself or on 
 | Path | Content |
 |------|---------|
 | `input/orders_metric_view.yaml` | The sample Metric View over `samples.tpch.orders` with one joined table |
+| `RESULTS.md` | All tests, results, evidence and status |
 | `scripts/run.sh` | The whole experiment |
 | `scripts/compare_roundtrip.py` | Type-preserving comparison of two YAML files |
 | `scripts/add_ansi_dialect.py` | Adds `ANSI_SQL` expression variants to an Ossie model |
