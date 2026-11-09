@@ -44,7 +44,7 @@ echo "== 3. Dimension from the joined table"
 sql "SELECT customer_name, MEASURE(total_revenue) AS total_revenue FROM $VIEW GROUP BY customer_name ORDER BY total_revenue DESC LIMIT 3" \
   | tee "$OUT/03_joined_dimension.json"
 
-echo "== 4. Window measure vs plain sum, first 10 days of the dataset (the semantics dbt/Cube/Snowflake lose)"
+echo "== 4. Window measure vs plain sum, first 10 days of the dataset (the semantics Cube and Snowflake lose)"
 sql "SELECT order_date, MEASURE(total_revenue) AS total_revenue, MEASURE(revenue_trailing_7d) AS revenue_trailing_7d
      FROM $VIEW GROUP BY order_date ORDER BY order_date LIMIT 10" \
   | tee "$OUT/04_window_vs_plain.json"

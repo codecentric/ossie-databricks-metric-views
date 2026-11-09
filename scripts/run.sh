@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Reproduces the experiment from the article: Databricks Metric View -> Apache Ossie
-# -> Metric View (Java converter), then Ossie -> Snowflake / Cube / dbt (Python converters).
+# Reproduces the experiment: Databricks Metric View -> Apache Ossie -> Metric View (Java converter),
+# then Ossie -> Snowflake / Cube (Python converters).
 #
 # Usage: ./scripts/run.sh            (from anywhere; paths are resolved relative to the repo)
 # Requires: git, Maven, a JDK 21+ (set JAVA_HOME), Python 3.11+, network access.
@@ -39,15 +39,14 @@ echo "== 2. Build the Java converter"
 JAR="$(ls "$WORK"/ossie/converters/databricks/java/target/ossie-databricks-converter-*-SNAPSHOT.jar)"
 ossie_db() { "$JAVA_BIN" -jar "$JAR" "$@"; }
 
-echo "== 3. Python environment for the validator and the dbt/Cube/Snowflake converters"
+echo "== 3. Python environment for the validator and the Cube/Snowflake converters"
 # Rebuild the environment on every run so that it always matches the pinned Apache Ossie commit.
 rm -rf "$WORK/venv"
 "$PYTHON" -m venv "$WORK/venv"
 # shellcheck disable=SC1091
 source "$WORK/venv/bin/activate"
 pip install -q --disable-pip-version-check pyyaml jsonschema sqlglot \
-  "$WORK/ossie/python" "$WORK/ossie/converters/dbt" \
-  "$WORK/ossie/converters/cube" "$WORK/ossie/converters/snowflake"
+  "$WORK/ossie/python" "$WORK/ossie/converters/cube" "$WORK/ossie/converters/snowflake"
 
 cp "$ROOT/input/orders_metric_view.yaml" "$OUT/orders_mv.yaml"
 cd "$OUT"
@@ -66,10 +65,7 @@ ossie-snowflake -i orders_ossie.yaml -o sf.yaml 2>&1 \
 echo "== 6. Ossie -> Cube"
 ossie-cube export -i orders_ossie.yaml -o cube_out > cube_log.txt 2>&1 || true
 
-echo "== 7. Ossie -> dbt (MetricFlow)"
-ossie-dbt ossie-to-msi -i orders_ossie.yaml -o dbt_manifest.json > dbt_log.txt 2>&1 || true
-
-echo "== 8. Hypothesis: add an ANSI_SQL variant, convert to Snowflake again"
+echo "== 7. Hypothesis: add an ANSI_SQL variant, convert to Snowflake again"
 "$PYTHON" "$ROOT/scripts/add_ansi_dialect.py" orders_ossie.yaml orders_ossie_ansi.yaml
 ossie-snowflake -i orders_ossie_ansi.yaml -o sf_ansi.yaml 2>&1 \
   | sed 's#.*UserWarning: ##' | grep -v 'warnings.warn' > snowflake_ansi_log.txt || true

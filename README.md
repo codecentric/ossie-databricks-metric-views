@@ -1,15 +1,15 @@
 # Apache Ossie and Databricks Metric Views: reproducing the experiment
 
-This repository accompanies the codecentric blog article *Testing Apache Ossie With Databricks Metric Views: What Survives the Conversion* (link to follow once published).
+A reproducible experiment: what survives when a Databricks Unity Catalog Metric View is converted through [Apache Ossie](https://github.com/apache/ossie) (incubating) and onward to other tools.
 
-It converts a small Databricks Unity Catalog Metric View into an [Apache Ossie](https://github.com/apache/ossie) (incubating) semantic model and back, and then hands the Ossie model to the Snowflake, Cube and dbt (MetricFlow) converters to see what is lost on the way.
+It converts a small Metric View into an Ossie semantic model and back, deploys the result to Databricks, and then hands the Ossie model to the Snowflake and Cube converters to see what is lost on the way.
 
 ## What the experiment shows
 
 - **Round trip:** Metric View to Ossie and back to a Metric View yields an equal document. Features without a native Ossie field (view filter, currency format, window measure, join `rely` hint) are carried as `custom_extensions` payloads.
-- **Other targets:** the converters differ in how much they keep and how openly they report loss. In the run described in the article, the dbt and Cube outputs turn the trailing-window measure `revenue_trailing_7d` into a plain sum without mentioning it, and the Snowflake converter skips all expressions until an `ANSI_SQL` variant is added.
+- **Other targets:** the converters differ in how much they keep and how openly they report loss. In the reference run, the Cube output turns the trailing-window measure `revenue_trailing_7d` into a plain sum without mentioning it, and the Snowflake converter skips all expressions until an `ANSI_SQL` variant is added.
 
-See the article for the interpretation. The scripts here only produce the evidence.
+The scripts here only produce the evidence; the reference outputs are in `expected/`.
 
 ## Run it
 
@@ -24,9 +24,9 @@ The script:
 
 1. fetches `apache/ossie` at the pinned commit `698272a1973fac137f66a21f8899014ea3208d10` into `work/`;
 2. builds the Java Databricks converter with Maven;
-3. creates a Python virtual environment with the Ossie validator and the dbt, Cube and Snowflake converters;
+3. creates a Python virtual environment with the Ossie validator and the Cube and Snowflake converters;
 4. converts `input/orders_metric_view.yaml` to Ossie and back, validates the Ossie model, and compares the original with the re-export;
-5. converts the Ossie model to Snowflake, Cube and dbt;
+5. converts the Ossie model to Snowflake and Cube;
 6. repeats the Snowflake conversion after adding an `ANSI_SQL` variant to the expressions;
 7. compares everything in `out/` with the reference outputs in `expected/`.
 
@@ -59,7 +59,7 @@ What the run showed:
 | `scripts/compare_roundtrip.py` | Type-preserving comparison of two YAML files |
 | `scripts/add_ansi_dialect.py` | Adds `ANSI_SQL` expression variants to an Ossie model |
 | `scripts/databricks_test.sh`, `scripts/dbx_sql.py` | Optional deployment test and its REST helper |
-| `expected/` | Reference outputs from the run described in the article |
+| `expected/` | Reference outputs of `scripts/run.sh` |
 | `expected_databricks/` | Query results from the optional Databricks deployment |
 
 ## Limits
@@ -67,6 +67,8 @@ What the run showed:
 - The deployment test ran once, on one serverless SQL warehouse. The Databricks documentation shows window measures with version 1.1 examples, and the exported definition deployed and returned correct results there. The current documentation lists `fields` as the keyword for dimensions and accepts `dimensions` as a backward-compatible synonym, which is what the converter writes.
 - The converters are development-stage software (Ossie model version `0.2.0.dev0`). Later versions may behave differently. A difference against `expected/` is therefore an informative result and not necessarily an error.
 - One small model, one converter version. The findings are illustrative, not a benchmark.
+- The Snowflake and Cube outputs were generated but never loaded into those tools.
+- **The pinned commit predates the repository split.** As of 9 November 2026, the converters have moved from `apache/ossie` to [`apache/ossie-converters`](https://github.com/apache/ossie-converters) (which includes `apache/ossie` as a submodule), and the Python implementation of the Databricks converter is no longer there. The pinned commit still contains the old layout, so `run.sh` keeps working as long as that commit stays fetchable. Moving the pin to a newer version means adapting the paths in `scripts/run.sh`.
 
 ## Licence
 
