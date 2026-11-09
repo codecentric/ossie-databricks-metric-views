@@ -50,6 +50,24 @@ What the run showed:
 
 **Pitfall:** do not deploy a Metric View with `databricks experimental aitools tools query`. For multi-line statements it strips the leading whitespace of every line, which destroys the YAML indentation inside `$$ ... $$` and produces a misleading `Failed to parse YAML ... expected <block end>, but found '-'` error. `scripts/dbx_sql.py` sends the statement through the Statement Execution REST API, which keeps the text unchanged.
 
+## Optional: expression portability on DuckDB
+
+The expressions in an Ossie model are SQL in one dialect. `scripts/portability.py` checks that the expressions of the model exported above run on another engine, DuckDB (the engine MotherDuck is built on), and shows what the trailing 7-day measure returns with and without its window:
+
+```bash
+pip install pyyaml duckdb
+python scripts/portability.py expected/orders_ossie.yaml
+```
+
+The reference output is in `portability/duckdb_result.txt` (DuckDB 1.4.4). The test uses a tiny inline table (10 days, 2 orders per day), so it needs no warehouse and no network, and it checks the windowed column against an independent computation.
+
+What it showed:
+
+- `DATE_TRUNC('MONTH', ...)`, `SUM(...)`, `COUNT(*)` and the window query run on DuckDB exactly as they are written for Databricks.
+- The window changes the numbers, as on Databricks: the windowed value reaches 1,547 on the tenth day where a plain sum shows 237. A converter that drops the window changes the result, and that is not specific to Databricks.
+
+Limits: this was run on DuckDB only. Nothing was run on MotherDuck itself or on BigQuery, so it says nothing about those engines.
+
 ## Layout
 
 | Path | Content |
@@ -59,7 +77,9 @@ What the run showed:
 | `scripts/compare_roundtrip.py` | Type-preserving comparison of two YAML files |
 | `scripts/add_ansi_dialect.py` | Adds `ANSI_SQL` expression variants to an Ossie model |
 | `scripts/databricks_test.sh`, `scripts/dbx_sql.py` | Optional deployment test and its REST helper |
+| `scripts/portability.py` | Optional DuckDB portability test |
 | `expected/` | Reference outputs of `scripts/run.sh` |
+| `portability/duckdb_result.txt` | Reference output of the DuckDB portability test |
 | `expected_databricks/` | Query results from the optional Databricks deployment |
 
 ## Limits

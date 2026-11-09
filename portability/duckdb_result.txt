@@ -1,0 +1,21 @@
+== DuckDB: expressions copied verbatim from the Ossie model
+  OK    order_date           o_orderdate                            -> datetime.date(1992, 1, 1) (first of 20 rows)
+  OK    order_month          DATE_TRUNC('MONTH', o_orderdate)       -> datetime.date(1992, 1, 1) (first of 20 rows)
+  OK    total_revenue        SUM(o_totalprice)                      -> Decimal('2190.0')
+  OK    order_count          COUNT(*)                               -> 20
+  OK    revenue_trailing_7d  SUM(o_totalprice)                      -> Decimal('2190.0')
+
+== Window measure: correct (windowed) vs flattened to a plain sum
+  order_date     windowed  flattened
+  1992-01-01         NULL      201.0
+  1992-01-02        201.0      205.0
+  1992-01-03        406.0      209.0
+  1992-01-04        615.0      213.0
+  1992-01-05        828.0      217.0
+  1992-01-06       1045.0      221.0
+  1992-01-07       1266.0      225.0
+  1992-01-08       1491.0      229.0
+  1992-01-09       1519.0      233.0
+  1992-01-10       1547.0      237.0
+
+Check passed: the windowed column equals the hand-computed sum of the 7 previous days.
